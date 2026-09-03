@@ -61,7 +61,7 @@ export default function About() {
       aria-label="About me"
     >
       <div className="container-wide">
-        <SectionTitle number="01" title="ABOUT" titleLine2="ME" />
+        <SectionTitle number="01" title="ABOUT ME" />
 
         <div className="about-layout">
           {/* Left — main statement + interests */}
