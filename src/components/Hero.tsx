@@ -1,5 +1,5 @@
 // src/components/Hero.tsx
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { usePrefersReducedMotion } from '../hooks/useMediaQuery';
@@ -10,28 +10,26 @@ function Particles() {
   const pointsRef = useRef<THREE.Points>(null);
   const count = 500;
   const { mouse } = useThree();
+  const elapsedRef = useRef(0);
 
   const positions = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
-    positions[i * 3]     = (Math.random() - 0.5) * 14;
+    positions[i * 3] = (Math.random() - 0.5) * 14;
     positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
     positions[i * 3 + 2] = (Math.random() - 0.5) * 6;
   }
 
-  useFrame(({ clock }) => {
+  useFrame((_, delta) => {
     if (!pointsRef.current) return;
-    const t = clock.getElapsedTime();
-    pointsRef.current.rotation.y = t * 0.03 + mouse.x * 0.08;
+    elapsedRef.current += delta;
+    pointsRef.current.rotation.y = elapsedRef.current * 0.03 + mouse.x * 0.08;
     pointsRef.current.rotation.x = mouse.y * 0.04;
   });
 
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
         size={0.025}
@@ -50,53 +48,79 @@ interface HeroProps {
 }
 
 export default function Hero({ loaded }: HeroProps) {
-  const sectionRef    = useRef<HTMLElement>(null);
-  const line1Ref      = useRef<HTMLSpanElement>(null);
-  const line2Ref      = useRef<HTMLSpanElement>(null);
-  const line3Ref      = useRef<HTMLSpanElement>(null);
-  const subtitleRef   = useRef<HTMLDivElement>(null);
-  const descRef       = useRef<HTMLParagraphElement>(null);
-  const bottomRef     = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const line1Ref = useRef<HTMLSpanElement>(null);
+  const line2Ref = useRef<HTMLSpanElement>(null);
+  const line3Ref = useRef<HTMLSpanElement>(null);
+  const subtitleRef = useRef<HTMLDivElement>(null);
+  const descRef = useRef<HTMLParagraphElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
   const prefersReduced = usePrefersReducedMotion();
 
   useEffect(() => {
     if (!loaded) return;
 
-    const lines   = [line1Ref.current, line2Ref.current, line3Ref.current];
-    const support = [subtitleRef.current, descRef.current, bottomRef.current, scrollHintRef.current];
+    const lines = [line1Ref.current, line2Ref.current, line3Ref.current].filter(Boolean);
+    const support = [
+      subtitleRef.current,
+      descRef.current,
+      bottomRef.current,
+      scrollHintRef.current,
+    ].filter(Boolean);
 
     if (prefersReduced) {
-      gsap.set([...lines, ...support], { opacity: 1, yPercent: 0, filter: 'blur(0px)', y: 0 });
+      gsap.set([...lines, ...support], {
+        opacity: 1,
+        yPercent: 0,
+        filter: 'blur(0px)',
+        y: 0,
+      });
       return;
     }
 
-    const tl = gsap.timeline({ delay: 0.15 });
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ delay: 0.15 });
 
-    tl.fromTo(lines,
+      tl.fromTo(
+        lines,
         { yPercent: 105, opacity: 0, filter: 'blur(8px)' },
-        { yPercent: 0, opacity: 1, filter: 'blur(0px)', duration: 1.2, ease: 'power4.out', stagger: 0.1 }
+        {
+          yPercent: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 1.2,
+          ease: 'power4.out',
+          stagger: 0.1,
+        }
       )
-      .fromTo(subtitleRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
-        '-=0.7'
-      )
-      .fromTo(descRef.current,
-        { opacity: 0, y: 16 },
-        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
-        '-=0.6'
-      )
-      .fromTo(bottomRef.current,
-        { opacity: 0, y: 12 },
-        { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' },
-        '-=0.5'
-      )
-      .fromTo(scrollHintRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.6 },
-        '-=0.3'
-      );
+        .fromTo(
+          subtitleRef.current,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
+          '-=0.7'
+        )
+        .fromTo(
+          descRef.current,
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
+          '-=0.6'
+        )
+        .fromTo(
+          bottomRef.current,
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' },
+          '-=0.5'
+        )
+        .fromTo(
+          scrollHintRef.current,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.6 },
+          '-=0.3'
+        );
+    }, sectionRef);
+
+    return () => ctx.revert();
   }, [loaded, prefersReduced]);
 
   // Mouse parallax on hero text
@@ -106,11 +130,18 @@ export default function Hero({ loaded }: HeroProps) {
     if (!section) return;
 
     const onMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth  - 0.5) * 2;
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
       const y = (e.clientY / window.innerHeight - 0.5) * 2;
-      gsap.to([line1Ref.current, line2Ref.current, line3Ref.current], {
-        x: x * 8, y: y * 4, duration: 1.2, ease: 'power3.out', stagger: 0.03,
-      });
+      const validLines = [line1Ref.current, line2Ref.current, line3Ref.current].filter(Boolean);
+      if (validLines.length > 0) {
+        gsap.to(validLines, {
+          x: x * 8,
+          y: y * 4,
+          duration: 1.2,
+          ease: 'power3.out',
+          stagger: 0.03,
+        });
+      }
     };
 
     section.addEventListener('mousemove', onMove);
@@ -118,10 +149,14 @@ export default function Hero({ loaded }: HeroProps) {
   }, [loaded, prefersReduced]);
 
   const hidden = { opacity: 0 };
-  const visible = { opacity: 1 };
 
   return (
-    <section ref={sectionRef} id="hero" className="hero-section" aria-label="Introduction">
+    <section
+      ref={sectionRef}
+      id="hero"
+      className="hero-section"
+      aria-label="Introduction"
+    >
       {/* Three.js background */}
       <div className="hero-canvas" aria-hidden="true">
         <Canvas
@@ -144,17 +179,29 @@ export default function Hero({ loaded }: HeroProps) {
 
         <h1 aria-label="Shinta Arum Imaniyah">
           <span className="hero-text-overflow">
-            <span ref={line1Ref} className="hero-text" style={{ display: 'block', ...hidden }}>
+            <span
+              ref={line1Ref}
+              className="hero-text"
+              style={{ display: 'block', ...hidden }}
+            >
               SHINTA
             </span>
           </span>
           <span className="hero-text-overflow">
-            <span ref={line2Ref} className="hero-text" style={{ display: 'block', ...hidden }}>
+            <span
+              ref={line2Ref}
+              className="hero-text"
+              style={{ display: 'block', ...hidden }}
+            >
               ARUM
             </span>
           </span>
           <span className="hero-text-overflow">
-            <span ref={line3Ref} className="hero-text" style={{ display: 'block', ...hidden }}>
+            <span
+              ref={line3Ref}
+              className="hero-text"
+              style={{ display: 'block', ...hidden }}
+            >
               IMANIYAH
             </span>
           </span>
@@ -180,10 +227,20 @@ export default function Hero({ loaded }: HeroProps) {
       {/* Bottom bar */}
       <div ref={bottomRef} className="hero-bottom" style={hidden}>
         <div className="hero-meta">
-          <span className="label" style={{ color: 'var(--text-muted)', fontSize: '10px' }}>
+          <span
+            className="label"
+            style={{ color: 'var(--text-muted)', fontSize: '10px' }}
+          >
             LOCATION
           </span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--text-secondary)', letterSpacing: '0.1em' }}>
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '12px',
+              color: 'var(--text-secondary)',
+              letterSpacing: '0.1em',
+            }}
+          >
             Semarang, Indonesia
           </span>
         </div>
@@ -210,7 +267,12 @@ export default function Hero({ loaded }: HeroProps) {
       </div>
 
       {/* Scroll hint */}
-      <div ref={scrollHintRef} className="hero-scroll-hint" aria-hidden="true" style={hidden}>
+      <div
+        ref={scrollHintRef}
+        className="hero-scroll-hint"
+        aria-hidden="true"
+        style={hidden}
+      >
         <div className="hero-scroll-line" />
         <span>SCROLL TO EXPLORE</span>
         <span style={{ color: 'var(--accent)' }}>↓</span>

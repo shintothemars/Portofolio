@@ -1,203 +1,322 @@
 // src/data/projects.ts
-// Single source of truth for all portfolio projects
-//
-// ═══════════════════════════════════════════════════════════════════
-// CARA NAMBAHIN GAMBAR:
-//
-// 1. Taruh file JPG/PNG ke folder yang sesuai:
-//    src/assets/projects/skincure/   → untuk SkinCure
-//    src/assets/projects/elogul/     → untuk Elogul
-//    src/assets/projects/planet-card/→ untuk Planet Card
-//    src/assets/projects/stret/      → untuk STRET
-//    src/assets/projects/dermaly/    → untuk DermaLy
-//
-// 2. Import gambarnya di atas:
-//    import skinCover from '../assets/projects/skincure/cover.jpg';
-//    import skin1 from '../assets/projects/skincure/screen1.jpg';
-//
-// 3. Masukkan ke array images:
-//    images: [skinCover, skin1],
-//    coverImage: skinCover,
-//
-// ═══════════════════════════════════════════════════════════════════
-//
-// CONTOH (uncomment kalau udah taruh gambarnya):
-//
-// import skinCover   from '../assets/projects/skincure/cover.jpg';
-// import skin1       from '../assets/projects/skincure/screen1.jpg';
-// import skin2       from '../assets/projects/skincure/screen2.jpg';
-//
-// import elogulCover from '../assets/projects/elogul/cover.jpg';
-// import elogul1     from '../assets/projects/elogul/screen1.jpg';
-//
-// import planetCover from '../assets/projects/planet-card/cover.jpg';
-// import planet1     from '../assets/projects/planet-card/screen1.jpg';
-//
-// import stretCover  from '../assets/projects/stret/cover.jpg';
-//
-// import dermalyCover from '../assets/projects/dermaly/cover.jpg';
-// import dermaly1    from '../assets/projects/dermaly/screen1.jpg';
-// import dermaly2    from '../assets/projects/dermaly/screen2.jpg';
-// ═══════════════════════════════════════════════════════════════════
+// Single source of truth for all portfolio projects.
+// Project imagery imported directly from src/assets/projects/ for optimal Vite bundling.
+
+import rekruttaCover from '../assets/projects/rekrutta/Rekrutta.png';
+import dermalyCover from '../assets/projects/dermaly/DermaLy.png';
+import stretCover from '../assets/projects/stret/Stret.png';
+import chronotechCover from '../assets/projects/elogul/Chrono Tech.png';
+import skincureCover from '../assets/projects/skincure/Skincure.png';
+import planetCover from '../assets/projects/planet-card/Game Planet.png';
+
+export interface ProjectLinks {
+  live?: string;
+  github?: string;
+  caseStudy?: string;
+}
 
 export interface Project {
   id: string;
-  num: string;
   title: string;
+  shortTitle?: string;
   titleLine2?: string;
-  category: string;
-  year: string;
+  year: number | string;
   type: string;
-  shortDesc: string;
-  fullDesc: string;
+  categories: string[];
   role: string[];
-  responsibilities: string[];
+  description: string;
   impact: string;
   learned?: string;
   tools: string[];
-  images: string[];       // array of imported image paths
-  coverImage?: string;    // first / main image shown in card
+  coverImage?: string;
+  images?: string[];
+  links?: ProjectLinks;
+  featured: boolean;
+  published: boolean;
+  responsibilities?: string[];
   hasVisualization?: boolean;
+
+  // Optional future-proof fields
+  client?: string;
+  duration?: string;
+  team?: string;
+  problem?: string;
+  solution?: string;
+  process?: string;
+  technologies?: string[];
+  liveDemo?: string;
+  video?: string;
+  testimonial?: string;
 }
 
 export const projects: Project[] = [
   {
-    id: 'skincure',
-    num: '01',
-    title: 'SKINCURE',
-    category: 'AI · HEALTH TECH · MOBILE',
-    year: '2024',
-    type: 'Bangkit Academy 2024 Capstone Project',
-    shortDesc:
-      'A mobile application for early educational awareness of facial skin conditions using CNN-based image classification.',
-    fullDesc:
-      'SkinCure is a mobile application built as the Bangkit Academy 2024 capstone project. It uses a Convolutional Neural Network (CNN) model to classify facial skin conditions from uploaded images, providing early educational awareness to users about possible skin conditions. The project emphasizes accessible design and a simple prediction flow.',
-    role: ['Machine Learning Developer', 'UI/UX Designer'],
+    id: 'rekrutta',
+    title: 'REKRUTTA.AI',
+    shortTitle: 'REKRUTTA.AI',
+    titleLine2: 'AI-POWERED RECRUITMENT PLATFORM',
+    year: 2025,
+    type: 'Product Project / Web Application',
+    categories: ['AI', 'Web Application', 'Full Stack', 'UI/UX', 'HR Tech'],
+    role: ['Full Stack Developer', 'UI/UX Designer'],
+    description:
+      'Website HR berbasis AI yang membantu UKM merekrut kandidat tanpa tim HR khusus, sekaligus membantu job seeker menemukan pekerjaan yang sesuai dengan kemampuan dan potensinya.',
     responsibilities: [
-      'Built the facial skin condition detection model using CNN',
-      'Prepared and curated the image dataset',
-      'Trained and evaluated the machine learning model',
-      'Designed the mobile application interface in Figma',
-      'Designed a simple and user-friendly prediction flow',
+      'Merancang sistem rekrutmen cerdas berbasis AI dengan evaluasi kecocokan kandidat (Match Score)',
+      'Membangun alur pemindaian CV (Scan CV) dan ekstraksi keterampilan otomatis',
+      'Mengembangkan modul psikotes digital dan latihan wawancara berbasis AI (AI Interview)',
+      'Mendesain antarmuka modern yang ramah pengguna untuk pemilik UKM maupun pencari kerja',
     ],
     impact:
-      'Helps users gain early educational awareness of possible facial skin conditions through an accessible mobile-based classification system.',
+      'Memudahkan UKM menemukan talenta yang tepat secara efisien serta membantu pencari kerja memetakan potensi karir mereka.',
     learned:
-      'Deepened understanding of CNN architecture, model evaluation, dataset preparation, and how to design intuitive prediction interfaces for health-related applications.',
-    tools: ['Python', 'TensorFlow / Keras', 'CNN', 'Google Colab', 'Figma', 'Android / Mobile UI'],
-    images: [],        // ← ganti dengan: [skinCover, skin1, skin2]
-    coverImage: '',    // ← ganti dengan: skinCover
-  },
-  {
-    id: 'elogul',
-    num: '02',
-    title: 'ELOGUL',
-    category: 'UI/UX · FLUTTER · HEALTH TECH',
-    year: '2025',
-    type: 'PIMNAS Group Project',
-    shortDesc:
-      'A mobile application for recording and monitoring blood sugar levels, combined with an IoT-based monitoring system.',
-    fullDesc:
-      'Elogul is a health monitoring mobile application developed for PIMNAS. It enables users to record blood sugar levels and visualize their health history through an intuitive interface. The application connects to an IoT-based blood sugar monitoring device and presents data through graphs and status dashboards.',
-    role: ['UI/UX Designer', 'Flutter Mobile Developer'],
-    responsibilities: [
-      'Designed the full mobile application interface',
-      'Created user flow for the health monitoring experience',
-      'Built application screens using Flutter',
-      'Implemented dashboard, user detail page, and blood sugar status display',
-      'Developed graph visualization and history page',
+      'Mendalami perancangan platform pencocokan talenta berbasis AI, arsitektur full-stack dengan React dan Laravel, serta pemetaan kompetensi kandidat yang presisi.',
+    tools: [
+      'React',
+      'Laravel',
+      'TypeScript',
+      'Figma',
+      'AI / NLP Matching',
+      'Tailwind CSS',
     ],
-    impact:
-      'Presents health information in a simple visual format, helping users understand their blood sugar status and history over time.',
-    learned:
-      'Gained experience in Flutter mobile development, designing data visualization for health contexts, and developing user-centered interfaces for IoT-connected applications.',
-    tools: ['Flutter', 'UI/UX Design', 'Mobile Development'],
-    images: [],        // ← ganti dengan: [elogulCover, elogul1]
-    coverImage: '',    // ← ganti dengan: elogulCover
-  },
-  {
-    id: 'planet-card',
-    num: '03',
-    title: 'PLANET CARD',
-    titleLine2: 'EDUCATIONAL GAME',
-    category: 'GAME · UNITY · EDUCATION',
-    year: '2025',
-    type: 'Group Project',
-    shortDesc:
-      'An interactive educational game using drag-and-drop card mechanics to help students recognize and learn about planets.',
-    fullDesc:
-      'Planet Card Educational Game is an interactive learning experience created as a final semester project. Built in Unity, the game uses drag-and-drop card mechanics to help students recognize planets, understand their characteristics, and match them through visual interaction.',
-    role: ['Unity Game Developer'],
-    responsibilities: [
-      'Arranged UI elements and game layout',
-      'Implemented gameplay flow and level structure',
-      'Placed and managed game assets',
-      'Built drag-and-drop interaction system',
-      'Tested and iteratively improved the game experience',
-    ],
-    impact:
-      'Created an interactive learning experience that helps students understand and remember planetary information through simple, engaging game mechanics.',
-    learned:
-      'Learned Unity game development fundamentals, drag-and-drop interaction design, and how to balance educational objectives with engaging gameplay.',
-    tools: ['Unity', 'Drag-and-Drop Mechanics', 'Educational Game Design'],
-    images: [],        // ← ganti dengan: [planetCover, planet1]
-    coverImage: '',    // ← ganti dengan: planetCover
-  },
-  {
-    id: 'stret',
-    num: '04',
-    title: 'STRET',
-    titleLine2: 'CLUSTERING SYSTEM',
-    category: 'MACHINE LEARNING · WEB APPLICATION',
-    year: '2026',
-    type: 'Freelance Project',
-    shortDesc:
-      'A web-based machine learning system that enables users to analyze and group datasets using clustering techniques.',
-    fullDesc:
-      'STRET Clustering System is a freelance web-based project that transforms a data analysis process into an accessible web application. Users can upload and analyze datasets through a clustering interface, making machine learning analysis approachable without deep technical expertise.',
-    role: ['Machine Learning Developer', 'Web Developer'],
-    responsibilities: [
-      'Built the clustering workflow and logic',
-      'Prepared the web application structure',
-      'Managed GitHub repository and version control',
-      'Supported the deployment process',
-      'Connected machine learning logic with the web interface',
-    ],
-    impact:
-      'Transformed a technical data analysis process into a more accessible web-based system, making clustering analysis available through a browser interface.',
-    learned:
-      'Gained experience integrating machine learning models into web applications and managing the full project lifecycle from development to deployment.',
-    tools: ['Python', 'Machine Learning', 'Flask / Streamlit', 'GitHub'],
-    images: [],        // ← ganti dengan: [stretCover] (kalau ada screenshot)
-    coverImage: '',    // ← ganti dengan: stretCover
-    hasVisualization: true,  // menampilkan animasi clustering canvas
+    coverImage: rekruttaCover,
+    images: [rekruttaCover, '/projects/rekrutta/01.png'],
+    links: {
+      live: '',
+      github: '',
+      caseStudy: '',
+    },
+    featured: true,
+    published: true,
   },
   {
     id: 'dermaly',
-    num: '05',
     title: 'DERMALY',
-    titleLine2: 'AI SKIN CONDITION CLASSIFIER',
-    category: 'AI · HEALTH TECH · WEB APPLICATION',
-    year: '2026',
-    type: 'Final Project',
-    shortDesc:
-      'An AI-powered web application for educational classification of possible facial skin conditions from uploaded images.',
-    fullDesc:
-      'DermaLy is an AI-powered web application designed to classify possible facial skin conditions from uploaded images. The application provides prediction results, confidence scores, and visual explanations through an accessible web interface. It is intended for educational awareness only — not medical diagnosis.',
+    shortTitle: 'DERMALY',
+    titleLine2: 'FACIAL SKIN DISEASE CLASSIFIER',
+    year: 2026,
+    type: 'Final Project / Academic Research',
+    categories: ['AI', 'Machine Learning', 'HealthTech', 'Web Application'],
     role: ['Machine Learning Developer', 'Web Developer'],
+    description:
+      'Website AI untuk mengklasifikasikan penyakit kulit pada wajah menggunakan model Swin Transformers V2 dan ResNet50 yang dilengkapi visualisasi heatmap Grad-CAM untuk transparansi analisis medis awal.',
     responsibilities: [
-      'Developed and trained the machine learning classification model',
-      'Prepared and curated the training dataset',
-      'Compared performance across multiple model architectures',
-      'Integrated the best-performing model into a Flask-based web application',
-      'Designed the image upload → prediction result → visual explanation flow',
+      'Mengembangkan dual model AI (Swin Transformer v2 & ResNet50) untuk klasifikasi 6 kategori penyakit kulit wajah',
+      'Mengimplementasikan visualisasi heatmap Grad-CAM untuk interpretasi hasil diagnosis AI yang dapat dijelaskan (Explainable AI)',
+      'Mengintegrasikan model terbaik ke dalam aplikasi web berbasis Flask dengan inferensi real-time',
+      'Mendesain alur unggah atau ambil foto wajah langsung, analisis skor keyakinan, hingga penjelasan visual interaktif',
     ],
     impact:
-      'Demonstrates how artificial intelligence can support accessible educational awareness about possible facial skin conditions through an easy-to-use web interface.',
+      'Membantu pengguna dan edukator memperoleh kesadaran awal mengenai kondisi kulit wajah melalui analisis kecerdasan buatan yang akurat dan transparan.',
     learned:
-      'Advanced understanding of PyTorch model training and evaluation, model comparison methodology, Flask web integration, and designing interpretable AI outputs for non-technical users.',
-    tools: ['Python', 'PyTorch', 'Flask', 'HTML', 'CSS', 'JavaScript', 'Google Colab'],
-    images: [],        // ← ganti dengan: [dermalyCover, dermaly1, dermaly2]
-    coverImage: '',    // ← ganti dengan: dermalyCover
+      'Menguasai pelatihan Vision Transformer (Swin Transformer V2), teknik Explainable AI dengan Grad-CAM, serta deployment model deep learning ke antarmuka web.',
+    tools: [
+      'Python',
+      'PyTorch',
+      'Swin Transformer V2',
+      'ResNet50',
+      'Grad-CAM',
+      'Flask',
+      'HTML5',
+      'CSS3',
+      'JavaScript',
+    ],
+    coverImage: dermalyCover,
+    images: [dermalyCover],
+    links: {
+      live: '',
+      github: '',
+      caseStudy: '',
+    },
+    featured: true,
+    published: true,
+  },
+  {
+    id: 'stret',
+    title: 'STRET',
+    shortTitle: 'STRET',
+    titleLine2: 'STREET PHOTOGRAPHY CLUSTERING',
+    year: 2026,
+    type: 'Freelance Project',
+    categories: ['Machine Learning', 'Web Application', 'Data Science'],
+    role: ['Machine Learning Developer', 'Web Developer'],
+    description:
+      'Sistem clustering kepadatan sesi foto pada jasa street photography Sudut Kotalama menggunakan algoritma K-Means dan Fuzzy C-Means untuk optimasi penjadwalan dan distribusi fotografer.',
+    responsibilities: [
+      'Membangun workflow clustering dengan metode hard clustering (K-Means) dan soft clustering derajat keanggotaan (Fuzzy C-Means)',
+      'Menganalisis kepadatan berdasarkan lokasi (Marba, Pringgosewu, Distrik), kategori hari (weekend, hari libur), dan rasio fotografer',
+      'Menyediakan fitur evaluasi perbandingan performa algoritma, visualisasi sebaran cluster, dan ekspor data hasil analisis',
+      'Mengembangkan dashboard analitik modern dengan antarmuka gelap yang responsif dan mudah dipahami',
+    ],
+    impact:
+      'Mentransformasi proses analisis data manual menjadi sistem digital berbasis web yang mempermudah pengambilan keputusan operasional jasa fotografi.',
+    learned:
+      'Mengintegrasikan model clustering unsupervised machine learning dengan antarmuka analitik web real-time serta visualisasi data multidimensi.',
+    tools: [
+      'Python',
+      'Machine Learning',
+      'K-Means',
+      'Fuzzy C-Means',
+      'Flask / Streamlit',
+      'Sudut Kotalama Dataset',
+      'GitHub',
+    ],
+    coverImage: stretCover,
+    images: [stretCover],
+    links: {
+      live: '',
+      github: '',
+      caseStudy: '',
+    },
+    featured: true,
+    published: true,
+    hasVisualization: true,
+  },
+  {
+    id: 'elogul',
+    title: 'CHRONOTECH',
+    shortTitle: 'CHRONOTECH',
+    titleLine2: 'IOT HEALTH MONITORING',
+    year: 2025,
+    type: 'PIMNAS Group Project',
+    categories: ['UI/UX', 'Flutter', 'HealthTech', 'Mobile', 'IoT'],
+    role: ['UI/UX Designer', 'Flutter Mobile Developer'],
+    description:
+      'Aplikasi mobile IoT untuk memantau dan mendeteksi kadar gula darah serta asam urat tinggi secara otomatis, terhubung langsung dengan perangkat sensor IoT, grafik tren kesehatan, dan modul edukasi.',
+    responsibilities: [
+      'Mendesain antarmuka pengguna komprehensif di Figma (Dashboard status kesehatan, grafik riwayat, dan profil pengguna)',
+      'Membangun aplikasi mobile menggunakan Flutter dengan integrasi pencatatan otomatis kadar gula darah dan asam urat',
+      'Mengembangkan visualisasi grafik dinamis untuk mempermudah pemahaman tren status kesehatan (Normal / Tinggi)',
+      'Mengintegrasikan alur komunikasi data antara perangkat keras sensor IoT dengan aplikasi mobile',
+    ],
+    impact:
+      'Menyajikan data kesehatan personal dalam format visual yang ramah dan mudah dipahami untuk membantu pencegahan dan monitoring penyakit kronis sejak dini.',
+    learned:
+      'Mengasah keahlian pengembangan aplikasi Flutter terintegrasi IoT, visualisasi data kesehatan real-time, serta perancangan antarmuka pengguna berbasis empati.',
+    tools: [
+      'Flutter',
+      'UI/UX Design',
+      'Figma',
+      'IoT Connectivity',
+      'Mobile Development',
+    ],
+    coverImage: chronotechCover,
+    images: [chronotechCover],
+    links: {
+      live: '',
+      github: '',
+      caseStudy: '',
+    },
+    featured: true,
+    published: true,
+  },
+  {
+    id: 'skincure',
+    title: 'SKINCURE',
+    shortTitle: 'SKINCURE',
+    titleLine2: 'EARLY SKIN HEALTH DETECTION',
+    year: 2024,
+    type: 'Bangkit Academy 2024 Capstone Project',
+    categories: ['AI', 'Machine Learning', 'Mobile', 'UI/UX', 'HealthTech'],
+    role: ['Machine Learning Developer', 'UI/UX Designer'],
+    description:
+      'Aplikasi mobile berbasis AI untuk deteksi awal dan edukasi kesehatan kulit wajah menggunakan model Convolutional Neural Network (CNN), dilengkapi fitur AI Skin Scan, chatbot asisten, dan rekomendasi perawatan personal.',
+    responsibilities: [
+      'Membangun model deteksi kondisi kulit wajah menggunakan arsitektur Convolutional Neural Network (CNN)',
+      'Mengimplementasikan alur AI Skin Scan, visualisasi hasil deteksi, serta rekomendasi perawatan edukatif',
+      'Mendesain antarmuka aplikasi mobile modern di Figma (layar beranda Megumin, chatbot asisten, riwayat, dan favorit)',
+      'Melatih dan mengevaluasi model pada dataset gambar kondisi kulit wajah (Tim Capstone Bangkit C242)',
+    ],
+    impact:
+      'Membantu pengguna memperoleh kesadaran dan edukasi awal tentang potensi kondisi kulit wajah melalui sistem deteksi mobile yang mudah digunakan.',
+    learned:
+      'Mendalami arsitektur CNN, persiapan dataset citra medis non-klinis, serta perancangan alur inferensi mobile yang ramah pengguna.',
+    tools: [
+      'Python',
+      'TensorFlow / Keras',
+      'CNN',
+      'Google Colab',
+      'Figma',
+      'Android / Mobile UI Design',
+    ],
+    coverImage: skincureCover,
+    images: [skincureCover],
+    links: {
+      live: '',
+      github: '',
+      caseStudy: '',
+    },
+    featured: true,
+    published: true,
+  },
+  {
+    id: 'planet-card',
+    title: 'PLANET CARD',
+    shortTitle: 'PLANET CARD',
+    titleLine2: 'EDUCATIONAL GAME',
+    year: 2025,
+    type: 'Group Project / Final Semester Project',
+    categories: ['Game', 'Unity', 'Education'],
+    role: ['Unity Game Developer'],
+    description:
+      'Planet Card Educational Game adalah game edukasi interaktif berbasis Unity yang memanfaatkan mekanik drag-and-drop kartu untuk membantu siswa mengenal, mencocokkan, dan mempelajari karakteristik planet di tata surya.',
+    responsibilities: [
+      'Merancang tata letak UI dan hierarki visual elemen game edukasi',
+      'Mengembangkan alur alur permainan (gameplay flow) dan mekanik drag-and-drop interaktif',
+      'Melakukan manajemen dan penempatan aset grafis tata surya di dalam engine Unity',
+      'Menguji dan mengoptimalkan responsivitas mekanik drag-and-drop untuk pengalaman belajar yang menyenangkan',
+    ],
+    impact:
+      'Menyajikan media pembelajaran interaktif yang membantu siswa memahami informasi astronomi planet melalui mekanik permainan yang menyenangkan.',
+    learned:
+      'Menguasai dasar game development Unity, perancangan interaksi drag-and-drop yang intuitif, serta penyeimbangan tujuan edukatif dengan unsur permainan.',
+    tools: [
+      'Unity',
+      'C#',
+      'Drag-and-Drop Mechanics',
+      'Educational Game Design',
+    ],
+    coverImage: planetCover,
+    images: [planetCover],
+    links: {
+      live: '',
+      github: '',
+      caseStudy: '',
+    },
+    featured: true,
+    published: true,
   },
 ];
+
+// Helper functions for consumption across components & routes
+export function getPublishedProjects(): Project[] {
+  return projects.filter((p) => p.published !== false);
+}
+
+export function getFeaturedProjects(): Project[] {
+  return getPublishedProjects().filter((p) => p.featured);
+}
+
+export function getProjectById(id: string): Project | undefined {
+  return projects.find(
+    (p) =>
+      p.id === id ||
+      (id === 'chronotech' && p.id === 'elogul') ||
+      (id === 'elogul' && p.id === 'chronotech')
+  );
+}
+
+export function getAllCategories(
+  projectList: Project[] = getPublishedProjects()
+): string[] {
+  const categorySet = new Set<string>();
+  categorySet.add('ALL');
+
+  projectList.forEach((p) => {
+    p.categories.forEach((cat) => {
+      categorySet.add(cat);
+    });
+  });
+
+  return Array.from(categorySet);
+}

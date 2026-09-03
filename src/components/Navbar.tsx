@@ -1,5 +1,6 @@
 // src/components/Navbar.tsx
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 
 interface NavbarProps {
@@ -10,6 +11,8 @@ export default function Navbar({ loaded }: NavbarProps) {
   const navRef = useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // Reveal navbar after loader
   useEffect(() => {
@@ -21,20 +24,28 @@ export default function Navbar({ loaded }: NavbarProps) {
     );
   }, [loaded]);
 
-  // Scrolled state
+  // Scrolled state detection
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 60);
+      setScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollTo = (id: string) => {
+  const handleNavClick = (sectionId: string) => {
     setMenuOpen(false);
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+    if (location.pathname !== '/') {
+      navigate(`/#${sectionId}`);
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
 
@@ -42,16 +53,17 @@ export default function Navbar({ loaded }: NavbarProps) {
     <header
       ref={navRef}
       className={`navbar ${scrolled ? 'scrolled' : ''}`}
-      style={{ opacity: 0 }}
+      style={{ opacity: loaded ? 1 : 0 }}
     >
       {/* Logo */}
-      <a
-        href="/"
+      <Link
+        to="/"
         className="navbar-logo"
-        aria-label="Shinta Arum Imaniyah"
+        aria-label="Shinta Arum Imaniyah homepage"
+        data-cursor-label="HOME"
       >
-        SHINTA<sup>®</sup>
-      </a>
+        SHINTA<span className="navbar-logo-accent">.</span><sup>®</sup>
+      </Link>
 
       {/* Desktop nav */}
       <nav aria-label="Main navigation">
@@ -61,24 +73,38 @@ export default function Navbar({ loaded }: NavbarProps) {
         >
           <li>
             <a
+              href="#about"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavClick('about');
+              }}
+              data-cursor-label="ABOUT"
+            >
+              ABOUT
+            </a>
+          </li>
+          <li>
+            <a
               href="#work"
               onClick={(e) => {
                 e.preventDefault();
-                scrollTo('work');
+                handleNavClick('work');
               }}
+              data-cursor-label="WORK"
             >
               WORK
             </a>
           </li>
           <li>
             <a
-              href="#about"
+              href="#skills"
               onClick={(e) => {
                 e.preventDefault();
-                scrollTo('about');
+                handleNavClick('skills');
               }}
+              data-cursor-label="SKILLS"
             >
-              ABOUT
+              SKILLS
             </a>
           </li>
           <li>
@@ -86,8 +112,9 @@ export default function Navbar({ loaded }: NavbarProps) {
               href="#contact"
               onClick={(e) => {
                 e.preventDefault();
-                scrollTo('contact');
+                handleNavClick('contact');
               }}
+              data-cursor-label="CONTACT"
             >
               CONTACT
             </a>

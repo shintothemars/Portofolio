@@ -1,5 +1,5 @@
 // src/components/About.tsx
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SectionTitle from './SectionTitle';
@@ -23,26 +23,30 @@ export default function About() {
 
   useEffect(() => {
     if (prefersReduced) return;
-    const section = sectionRef.current!;
+    const section = sectionRef.current;
+    if (!section) return;
 
-    gsap.set([leftRef.current, rightRef.current], { opacity: 0, y: 40 });
+    const ctx = gsap.context(() => {
+      gsap.set([leftRef.current, rightRef.current], { opacity: 0, y: 40 });
 
-    ScrollTrigger.create({
-      trigger: section,
-      start: 'top 75%',
-      once: true,
-      onEnter: () => {
-        gsap.to([leftRef.current, rightRef.current], {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: 'power3.out',
-          stagger: 0.15,
-        });
-      },
-    });
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top 75%',
+        once: true,
+        onEnter: () => {
+          if (!leftRef.current || !rightRef.current) return;
+          gsap.to([leftRef.current, rightRef.current], {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: 'power3.out',
+            stagger: 0.15,
+          });
+        },
+      });
+    }, sectionRef);
 
-    return () => ScrollTrigger.refresh();
+    return () => ctx.revert();
   }, [prefersReduced]);
 
   return (
@@ -57,25 +61,22 @@ export default function About() {
       aria-label="About me"
     >
       <div className="container-wide">
-        <SectionTitle number="02" title="ABOUT Me" />
+        <SectionTitle number="01" title="ABOUT" titleLine2="ME" />
 
         <div className="about-layout">
-          {/* Left — main text + interests */}
+          {/* Left — main statement + interests */}
           <div ref={leftRef} style={{ opacity: prefersReduced ? 1 : 0 }}>
             <p className="about-text">
               An <strong>Informatics graduate</strong> from Semarang, Indonesia,
-              passionate about building meaningful digital products at the
-              intersection of{' '}
-              <strong>machine learning, software engineering</strong>, and{' '}
-              <strong>user-centered design</strong>.
+              passionate about machine learning, mobile development, UI/UX
+              design, and building meaningful digital products.
             </p>
             <p
               className="about-text"
               style={{ marginTop: '24px', fontSize: 'clamp(15px, 2vw, 20px)' }}
             >
-              From training neural networks to designing intuitive interfaces,
-              I enjoy working across the full spectrum of a product's technical
-              and creative challenges.
+              Building intelligent digital products through machine learning,
+              software engineering, and user-centered design.
             </p>
 
             <ul
@@ -105,33 +106,33 @@ export default function About() {
             </div>
 
             <div className="about-detail">
-              <div className="about-detail-label">Experience</div>
+              <div className="about-detail-label">Focus Areas</div>
               <div className="about-detail-text">
-                Machine Learning · AI
+                Machine Learning & AI
                 <br />
                 Web & Mobile Development
                 <br />
                 UI/UX Design
                 <br />
-                Educational Game Development
+                Educational Technology
               </div>
             </div>
 
             <div className="about-detail">
-              <div className="about-detail-label">Notable Projects</div>
+              <div className="about-detail-label">Experience</div>
               <div className="about-detail-text">
-                Bangkit Academy 2024 Capstone
+                Bangkit Academy 2024 Capstone Project
                 <br />
-                PIMNAS Research Project
+                PIMNAS Group Project
                 <br />
-                Freelance ML Systems
+                Freelance ML System Development
                 <br />
-                Academic Final Project
+                Final Academic Research
               </div>
             </div>
 
             <div className="about-detail">
-              <div className="about-detail-label">Contact</div>
+              <div className="about-detail-label">Direct Contact</div>
               <div className="about-detail-text">
                 <a
                   href="mailto:shintaaa.arum@gmail.com"
@@ -153,6 +154,7 @@ export default function About() {
                     (e.target as HTMLElement).style.color = 'var(--text-secondary)';
                     (e.target as HTMLElement).style.borderColor = 'var(--border)';
                   }}
+                  data-cursor-label="EMAIL"
                 >
                   shintaaa.arum@gmail.com
                 </a>

@@ -1,11 +1,16 @@
 // src/components/ProjectMeta.tsx
+import React from 'react';
+
 interface ProjectMetaProps {
-  role: string[];
-  tools: string[];
-  year: string;
-  type: string;
-  impact: string;
+  role?: string[];
+  tools?: string[];
+  year?: number | string;
+  type?: string;
+  impact?: string;
   learned?: string;
+  client?: string;
+  duration?: string;
+  team?: string;
 }
 
 export default function ProjectMeta({
@@ -15,46 +20,82 @@ export default function ProjectMeta({
   type,
   impact,
   learned,
+  client,
+  duration,
+  team,
 }: ProjectMetaProps) {
   return (
-    <div>
+    <div className="project-meta-wrapper">
       <div className="project-meta-grid">
-        <div className="project-meta-item">
-          <div className="project-meta-label">Role</div>
-          <div className="project-meta-value">{role.join(', ')}</div>
-        </div>
-        <div className="project-meta-item">
-          <div className="project-meta-label">Year</div>
-          <div className="project-meta-value">{year}</div>
-        </div>
-        <div className="project-meta-item" style={{ gridColumn: '1 / -1' }}>
-          <div className="project-meta-label">Project Type</div>
-          <div className="project-meta-value">{type}</div>
-        </div>
-        <div className="project-meta-item" style={{ gridColumn: '1 / -1' }}>
-          <div className="project-meta-label">Impact</div>
-          <div className="project-meta-value">{impact}</div>
-        </div>
+        {role && role.length > 0 && (
+          <div className="project-meta-item">
+            <div className="project-meta-label">ROLE</div>
+            <div className="project-meta-value">{role.join(' · ')}</div>
+          </div>
+        )}
+
+        {year && (
+          <div className="project-meta-item">
+            <div className="project-meta-label">YEAR</div>
+            <div className="project-meta-value">{year}</div>
+          </div>
+        )}
+
+        {type && (
+          <div className="project-meta-item">
+            <div className="project-meta-label">PROJECT TYPE</div>
+            <div className="project-meta-value">{type}</div>
+          </div>
+        )}
+
+        {client && (
+          <div className="project-meta-item">
+            <div className="project-meta-label">CLIENT</div>
+            <div className="project-meta-value">{client}</div>
+          </div>
+        )}
+
+        {duration && (
+          <div className="project-meta-item">
+            <div className="project-meta-label">DURATION</div>
+            <div className="project-meta-value">{duration}</div>
+          </div>
+        )}
+
+        {team && (
+          <div className="project-meta-item">
+            <div className="project-meta-label">TEAM</div>
+            <div className="project-meta-value">{team}</div>
+          </div>
+        )}
+
+        {impact && (
+          <div className="project-meta-item full-width">
+            <div className="project-meta-label">IMPACT</div>
+            <div className="project-meta-value">{impact}</div>
+          </div>
+        )}
+
         {learned && (
-          <div className="project-meta-item" style={{ gridColumn: '1 / -1' }}>
-            <div className="project-meta-label">What I Learned</div>
+          <div className="project-meta-item full-width">
+            <div className="project-meta-label">KEY TAKEAWAY</div>
             <div className="project-meta-value">{learned}</div>
           </div>
         )}
       </div>
 
-      <div>
-        <div className="project-meta-label" style={{ marginBottom: '12px' }}>
-          Tools & Technologies
+      {tools && tools.length > 0 && (
+        <div className="project-tools-section">
+          <div className="project-meta-label">TOOLS & TECHNOLOGIES</div>
+          <div className="project-tools">
+            {tools.map((tool) => (
+              <span key={tool} className="tool-tag">
+                {tool}
+              </span>
+            ))}
+          </div>
         </div>
-        <div className="project-tools">
-          {tools.map((tool) => (
-            <span key={tool} className="tool-tag">
-              {tool}
-            </span>
-          ))}
-        </div>
-      </div>
+      )}
     </div>
   );
 }

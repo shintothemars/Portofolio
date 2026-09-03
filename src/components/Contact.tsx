@@ -1,5 +1,5 @@
 // src/components/Contact.tsx
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { usePrefersReducedMotion } from '../hooks/useMediaQuery';
@@ -14,33 +14,47 @@ export default function Contact() {
 
   useEffect(() => {
     if (prefersReduced) return;
+    const section = sectionRef.current;
+    if (!section) return;
 
-    const lines = headingRef.current?.querySelectorAll('.contact-heading-line > span');
-    if (!lines) return;
+    const ctx = gsap.context(() => {
+      const lines = headingRef.current?.querySelectorAll(
+        '.contact-heading-line > span'
+      );
+      if (lines && lines.length > 0) {
+        gsap.set(lines, { yPercent: 100 });
+      }
+      if (contentRef.current) {
+        gsap.set(contentRef.current, { opacity: 0, y: 24 });
+      }
 
-    gsap.set(lines, { yPercent: 100 });
-    gsap.set(contentRef.current, { opacity: 0, y: 24 });
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top 70%',
+        once: true,
+        onEnter: () => {
+          if (lines && lines.length > 0) {
+            gsap.to(lines, {
+              yPercent: 0,
+              duration: 1.1,
+              ease: 'power4.out',
+              stagger: 0.08,
+            });
+          }
+          if (contentRef.current) {
+            gsap.to(contentRef.current, {
+              opacity: 1,
+              y: 0,
+              duration: 0.9,
+              ease: 'power3.out',
+              delay: 0.3,
+            });
+          }
+        },
+      });
+    }, sectionRef);
 
-    ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: 'top 70%',
-      once: true,
-      onEnter: () => {
-        gsap.to(lines, {
-          yPercent: 0,
-          duration: 1.1,
-          ease: 'power4.out',
-          stagger: 0.08,
-        });
-        gsap.to(contentRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          ease: 'power3.out',
-          delay: 0.3,
-        });
-      },
-    });
+    return () => ctx.revert();
   }, [prefersReduced]);
 
   return (
@@ -50,7 +64,7 @@ export default function Contact() {
       className="contact-section container-wide"
       aria-label="Contact"
     >
-      {/* Large heading */}
+      {/* Large typography */}
       <h2
         ref={headingRef}
         className="contact-heading"

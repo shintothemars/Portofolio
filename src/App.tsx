@@ -1,10 +1,12 @@
 // src/App.tsx
-import { useState, useCallback } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import React, { useState, useCallback } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Loader from './components/Loader';
 import Navbar from './components/Navbar';
 import CustomCursor from './components/CustomCursor';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
+import ProjectDetail from './pages/ProjectDetail';
 import { useLenis } from './hooks/useLenis';
 
 export default function App() {
@@ -19,18 +21,25 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      {/* Scroll restoration */}
+      <ScrollToTop />
+
       {/* Custom cursor (desktop only) */}
       <CustomCursor />
 
       {/* Loading screen */}
       {!loaded && <Loader onComplete={handleLoaderComplete} />}
 
-      {/* Navigation */}
+      {/* Global persistent header navigation */}
       <Navbar loaded={loaded} />
 
-      {/* Main content */}
+      {/* Main routed content */}
       <main id="main-content">
-        <Home loaded={loaded} />
+        <Routes>
+          <Route path="/" element={<Home loaded={loaded} />} />
+          <Route path="/project/:id" element={<ProjectDetail />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
     </BrowserRouter>
   );

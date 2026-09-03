@@ -1,15 +1,20 @@
 // src/pages/Home.tsx
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Hero from '../components/Hero';
 import SectionTitle from '../components/SectionTitle';
+import ProjectFilter from '../components/ProjectFilter';
 import ProjectSection from '../components/ProjectSection';
 import About from '../components/About';
 import Skills from '../components/Skills';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
-import { projects } from '../data/projects';
+import {
+  getPublishedProjects,
+  getAllCategories,
+  type Project,
+} from '../data/projects';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -19,6 +24,48 @@ interface HomeProps {
 
 export default function Home({ loaded }: HomeProps) {
   const scrollProgressRef = useRef<HTMLDivElement>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('ALL');
+
+  const allProjects = useMemo(() => getPublishedProjects(), []);
+  const categories = useMemo(() => getAllCategories(allProjects), [allProjects]);
+
+  // Compute count of projects for each category
+  const projectCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      ALL: allProjects.length,
+    };
+
+    categories.forEach((cat) => {
+      if (cat === 'ALL') return;
+      counts[cat] = allProjects.filter((p) =>
+        p.categories.some(
+          (c) => c.toLowerCase() === cat.toLowerCase()
+        )
+      ).length;
+    });
+
+    return counts;
+  }, [allProjects, categories]);
+
+  // Filter projects according to active category
+  const filteredProjects = useMemo(() => {
+    if (activeCategory === 'ALL') {
+      return allProjects;
+    }
+    return allProjects.filter((p) =>
+      p.categories.some(
+        (c) => c.toLowerCase() === activeCategory.toLowerCase()
+      )
+    );
+  }, [allProjects, activeCategory]);
+
+  // Refresh ScrollTrigger when filter updates
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [activeCategory]);
 
   // Scroll progress bar
   useEffect(() => {
@@ -55,6 +102,9 @@ export default function Home({ loaded }: HomeProps) {
         style={{ margin: '0 auto' }}
       />
 
+      {/* About Me (Right below Hero) */}
+      <About />
+
       {/* Selected Works */}
       <section
         id="work"
@@ -62,20 +112,20 @@ export default function Home({ loaded }: HomeProps) {
         aria-label="Selected works"
       >
         <div className="container-wide">
-          <SectionTitle number="01" title="SELECTED" titleLine2="WORKS" />
+          <SectionTitle number="02" title="SELECTED" titleLine2="WORKS" />
+
+          {/* Interactive Dynamic Filter */}
+          <ProjectFilter
+            categories={categories}
+            activeCategory={activeCategory}
+            onSelectCategory={setActiveCategory}
+            projectCounts={projectCounts}
+          />
         </div>
 
-        {projects.map((project, i) => (
-          <ProjectSection
-            key={project.id}
-            project={project}
-            reverse={i % 2 !== 0}
-          />
-        ))}
+        {/* Dynamic Project Feed */}
+        <ProjectSection projects={filteredProjects} />
       </section>
-
-      {/* About */}
-      <About />
 
       {/* Skills */}
       <Skills />
